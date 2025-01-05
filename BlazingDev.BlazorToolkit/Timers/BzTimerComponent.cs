@@ -6,14 +6,42 @@ using Timer = System.Timers.Timer;
 
 namespace BlazingDev.BlazorToolkit.Timers;
 
+/// <summary>
+/// Wraps a native Timer inside so you don't have to care about creation, event registration, and disposing!
+/// </summary>
 public class BzTimerComponent : BzComponentBase
 {
-    [Parameter] public bool Enabled { get; set; } = true;
-    [Parameter] [EditorRequired] public double Interval { get; set; }
-    [Parameter] public string? Name { get; set; }
+    /// <summary>
+    /// To enable or disable the timer. Default value: true (= enabled)
+    /// </summary>
+    [Parameter]
+    public bool Enabled { get; set; } = true;
 
-    [Parameter] public Action? OnElapsedAction { get; set; }
-    [Parameter] public EventCallback OnElapsed { get; set; }
+    /// <summary>
+    /// The timer interval in milliseconds
+    /// </summary>
+    [Parameter]
+    [EditorRequired]
+    public int Interval { get; set; }
+
+    /// <summary>
+    /// Name of the timer. For your personal documentation as well as future features ;)
+    /// </summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// EventCallback to handle tick events. Is invoked on the UI thread, will rerender your component automatically.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnElapsed { get; set; }
+
+    /// <summary>
+    /// Basic tick "callback" without UI thread dispatching and without automatic component rerendering.
+    /// Useful if you want to decide if rerendering is really needed. 
+    /// </summary>
+    [Parameter]
+    public Action? OnElapsedAction { get; set; }
 
     private readonly Timer _timer = new();
 
