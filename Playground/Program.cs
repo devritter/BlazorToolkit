@@ -1,4 +1,4 @@
-using BlazingDev.BlazorToolkit.Playground.Components;
+using Playground.AppFrame;
 
 var builder = WebApplication.CreateBuilder(args);
 
