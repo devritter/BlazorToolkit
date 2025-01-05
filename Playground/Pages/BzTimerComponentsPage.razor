@@ -1,0 +1,17 @@
+﻿@page "/BzTimerComponents"
+
+<PageTitle>BzTimerComponents</PageTitle>
+
+<h5>Timer with 1000ms Interval, using the Action callback, rendering after 10 ticks</h5>
+<BzTimerComponentUsage Interval="1000" UseAction="true"/>
+
+<br/>
+<h5>Timer with 1000ms Interval, using the EventCallback, with 200ms execution delay</h5>
+<BzTimerComponentUsage Interval="1000" UseAction="false" CallbackDelay="200"/>
+
+<br/>
+<h5>Timer with 1000ms Interval, using the EventCallback, with 2500 execution delay</h5>
+<BzTimerComponentUsage Interval="1000" UseAction="false" CallbackDelay="2500"/>
+
+<br/>
+<a class="link" @onclick="() => { }">Trigger rerender</a>

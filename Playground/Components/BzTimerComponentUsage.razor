@@ -1,0 +1,54 @@
+@using BlazingDev.BlazorToolkit.Timers
+<MyCard>
+    <span>I'm using a BzTimerComponent.</span>
+    @if (UseAction)
+    {
+        <span>Action callback count: @_actionCallbackCount</span>
+        <BzTimerComponent Name="MyActionTimer" Interval="Interval" OnElapsedAction="HandleElapsedAsAction"/>
+    }
+    else
+    {
+        <span>Event callback count: @_eventCallbackCount</span>
+        if (_runningEventCallbacksCount > 1)
+        {
+            <span>Running event handlers: @_runningEventCallbacksCount</span>
+        }
+
+        <BzTimerComponent Name="MyEventCallbackTimer" Interval="Interval" OnElapsed="HandleElapsedAsEventCallback"/>
+    }
+    <span>Last Render: @DateTime.Now.ToString("o")</span>
+    <a @onclick="() => { }">Trigger rerender</a>
+</MyCard>
+
+@code {
+    [Parameter] public double Interval { get; set; } = 1000;
+    [Parameter] public bool UseAction { get; set; }
+    [Parameter] public int CallbackDelay { get; set; } = 200;
+
+    int _actionCallbackCount;
+    int _eventCallbackCount;
+    int _runningEventCallbacksCount;
+
+    private void HandleElapsedAsAction()
+    {
+        _actionCallbackCount++;
+        if (_actionCallbackCount % 10 == 0)
+        {
+            InvokeAsync(StateHasChanged);
+        }
+
+        if (_actionCallbackCount == 5)
+        {
+            throw new InvalidOperationException("just to test exception handling");
+        }
+    }
+
+    private async Task HandleElapsedAsEventCallback()
+    {
+        Interlocked.Increment(ref _runningEventCallbacksCount);
+        _eventCallbackCount++;
+        await Task.Delay(CallbackDelay);
+        Interlocked.Decrement(ref _runningEventCallbacksCount);
+    }
+
+}
