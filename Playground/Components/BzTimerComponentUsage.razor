@@ -4,7 +4,8 @@
     @if (UseAction)
     {
         <span>Action callback count: @_actionCallbackCount</span>
-        <BzTimerComponent Name="MyActionTimer" Interval="Interval" OnElapsedAction="HandleElapsedAsAction"/>
+        <BzTimerComponent Name="MyActionTimer" ShowControls="true" Interval="Interval"
+                          OnElapsedAction="HandleElapsedAsAction"/>
     }
     else
     {
@@ -14,7 +15,8 @@
             <span>Running event handlers: @_runningEventCallbacksCount</span>
         }
 
-        <BzTimerComponent Name="MyEventCallbackTimer" Interval="Interval" OnElapsed="HandleElapsedAsEventCallback"/>
+        <BzTimerComponent Name="MyEventCallbackTimer" ShowControls="true" Interval="Interval"
+                          OnElapsed="HandleElapsedAsEventCallback"/>
     }
     <span>Last Render: @DateTime.Now.ToString("o")</span>
     <a @onclick="() => { }">Trigger rerender</a>

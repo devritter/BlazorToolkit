@@ -9,7 +9,7 @@ namespace BlazingDev.BlazorToolkit.Timers;
 /// <summary>
 /// Wraps a native Timer inside so you don't have to care about creation, event registration, and disposing!
 /// </summary>
-public class BzTimerComponent : BzComponentBase
+public partial class BzTimerComponent : BzComponentBase
 {
     /// <summary>
     /// To enable or disable the timer. Default value: true (= enabled)
@@ -43,25 +43,30 @@ public class BzTimerComponent : BzComponentBase
     [Parameter]
     public Action? OnElapsedAction { get; set; }
 
+    [Parameter] public bool ShowControls { get; set; }
+
     private readonly Timer _timer = new();
-
-    protected override void OnParametersSet()
-    {
-        // need to check for real changes, otherwise the time passed is always reset 
-        if (Math.Abs(_timer.Interval - Interval) > 0.1)
-        {
-            _timer.Interval = Interval;
-        }
-
-        _timer.Enabled = Enabled;
-
-        base.OnParametersSet();
-    }
+    private bool? _enableOverride;
+    private int? _intervalOverride;
 
     protected override void OnInitialized()
     {
         _timer.Elapsed += HandleElapsed;
         base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        // need to check for real changes, otherwise the time passed is always reset
+        var intervalToUse = _intervalOverride ?? Interval;
+        if (Math.Abs(_timer.Interval - intervalToUse) > 0.1)
+        {
+            _timer.Interval = intervalToUse;
+        }
+
+        _timer.Enabled = _enableOverride ?? Enabled;
+
+        base.OnParametersSet();
     }
 
     private async void HandleElapsed(object? sender, ElapsedEventArgs e)
