@@ -46,6 +46,8 @@ public partial class BzTimerComponent : BzComponentBase
     [Parameter] public bool ShowControls { get; set; }
 
     private readonly Timer _timer = new();
+    private bool? _enableOverride;
+    private int? _intervalOverride;
 
     protected override void OnInitialized()
     {
@@ -55,13 +57,14 @@ public partial class BzTimerComponent : BzComponentBase
 
     protected override void OnParametersSet()
     {
-        // need to check for real changes, otherwise the time passed is always reset 
-        if (Math.Abs(_timer.Interval - Interval) > 0.1)
+        // need to check for real changes, otherwise the time passed is always reset
+        var intervalToUse = _intervalOverride ?? Interval;
+        if (Math.Abs(_timer.Interval - intervalToUse) > 0.1)
         {
-            _timer.Interval = Interval;
+            _timer.Interval = intervalToUse;
         }
 
-        _timer.Enabled = Enabled;
+        _timer.Enabled = _enableOverride ?? Enabled;
 
         base.OnParametersSet();
     }

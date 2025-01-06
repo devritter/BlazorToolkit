@@ -5,8 +5,49 @@
     <div class="bz-timer-component-controls"
          style="display: inline-flex; flex-direction: row; align-items: center; border: 2px solid firebrick; background-color: yellow; padding: 0 5px; gap: 5px; border-radius: 5px;">
         <span>@Name</span>
-        <span><input type="number" @bind="Interval" style="width: 100px">ms</span>
-        <button disabled="@_timer.Enabled" @onclick="() => _timer.Enabled = true">Start</button>
-        <button disabled="@(!_timer.Enabled)" @onclick="() => _timer.Enabled = false">Stop</button>
+        <span><input type="number" min="1"
+                     value="@_timer.Interval" @onchange="SetIntervalOverride"
+                     style="width: 100px">ms</span>
+        <button disabled="@_timer.Enabled" @onclick="() => SetEnabledOverride(true)">Start</button>
+        <button disabled="@(!_timer.Enabled)" @onclick="() => SetEnabledOverride(false)">Stop</button>
+        <button disabled="@(!HasAnyOverrides())" @onclick="ClearOverrides" title="Clear overrides">Reset
+        </button>
     </div>
 }
+
+@code {
+
+    private bool HasAnyOverrides()
+    {
+        return _enableOverride.HasValue || _intervalOverride.HasValue;
+    }
+
+    private void SetEnabledOverride(bool enabled)
+    {
+        _enableOverride = enabled;
+        OnParametersSet();
+    }
+
+    private void SetIntervalOverride(ChangeEventArgs obj)
+    {
+        var valueString = obj.Value?.ToString();
+        if (valueString.HasContent())
+        {
+            _intervalOverride = int.Parse(valueString).Clamp(1, null);
+        }
+        else
+        {
+            _intervalOverride = null;
+        }
+
+        OnParametersSet();
+    }
+
+    private void ClearOverrides()
+    {
+        _enableOverride = null;
+        _intervalOverride = null;
+        OnParametersSet();
+    }
+
+}   
