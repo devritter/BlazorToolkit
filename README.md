@@ -46,3 +46,27 @@ And you can use `ShowControls` for testing purposes which let you override the `
 ```xml
 <BzTimerComponent Name="PriceRefreshTimer" Interval="5000" OnElapsed="HandleUpdatePriceTimerElapsed" />
 ```
+
+## BzCssClassBuilder
+
+A utility class to help creating CSS classes lists.
+
+* static `Create` methods to not use spaces (sometimes handy in razor files)
+* `Add(className)`, `Add(listOfClassNames)`, `AddIf(condition, className)`
+* `Remove(className)`, `RemoveIf(condition, className)`
+* automatically trimes classNames
+* ignores duplicates and no-content classNames
+* use `Build()` or `ToString()` to get your final string
+
+### Usage Example:
+
+```csharp
+@{
+    var cssClasses = BzCssClassBuilder.Create("my-button")
+        .Add("button-primary")
+        .AddIf(isOutline, "button-outline")
+        .Add(SomeSettings.AdditionalButtonClasses) // e.g. theme-specific
+        .Build()
+}
+<button class="@cssClasses">...</button>
+```
