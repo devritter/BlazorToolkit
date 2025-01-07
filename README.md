@@ -70,3 +70,19 @@ A utility class to help creating CSS classes lists.
 }
 <button class="@cssClasses">...</button>
 ```
+
+## BzCssStyleBuilder
+
+A utility class for building CSS styles conditionally and fluently.
+
+### Usage:
+
+```csharp
+var style = new BzCssStyleBuilder()
+    .Add("color", "red")
+    .Add("font-size", UserFontSize, "em")
+    .AddIf(isBold, "font-weight", "bold")
+    .AddIf(concreteWidth, "width", CalculateWidthFunction, "px")
+    .Add(Style) // from component parameter
+    .Build();
+```
