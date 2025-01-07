@@ -1,0 +1,37 @@
+@page "/BzObjectInspectorUsage"
+@using BlazingDev.BlazorToolkit.Components
+
+<MyCard>
+    <h3>Object Inspector Usage</h3>
+    <BzObjectInspector ObjectToInspect="@sampleObject" />
+</MyCard>
+
+@code {
+    private SampleObject sampleObject = new SampleObject
+    {
+        Name = "Sample Object",
+        Age = 30,
+        Address = new Address
+        {
+            Street = "123 Main St",
+            City = "Anytown",
+            State = "CA",
+            ZipCode = "12345"
+        }
+    };
+
+    private class SampleObject
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public Address Address { get; set; }
+    }
+
+    private class Address
+    {
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string ZipCode { get; set; }
+    }
+}
