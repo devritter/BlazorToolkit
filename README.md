@@ -6,9 +6,9 @@ Useful components and utilities for Blazor developers
 
 Your new component base class with:
 
-* `Logger` property
+* typed `Logger` instance
+* `Disposer` object to register disposables at creation time!
 * `InvokeAsyncStateHasChanged()` method
-* `OnDispose()` method to override
 
 and more to come!
 
@@ -27,6 +27,36 @@ directory and subdirectories:
 
 ```
 @inherits BlazingDev.BlazorToolkit.Components.BzComponentBase
+```
+
+### Example
+
+```csharp
+FileStream _fileStream = null;
+
+protected override void OnInitialized()
+{
+    _fileStream = GetFileStream();
+    
+    // BzAsyncDisposer from base class
+    Disposer.Add(_fileStream);
+    
+    var subscription = SubscriptionService.Subscribe("important-messages", HandleImportantMessage);
+    // Logger from base class
+    Logger.LogInformation("Got subscription {SubscriptionId}", subscription.Id);
+    Disposer.Add(subscription);
+    
+    SubscriptionService.ConnectionLost += HandleConnectionLost;
+    Disposer.Add(() => SubscriptionService.ConnectionLost -= HandleConnectionLost);
+    Disposer.Add(SayGoodbyeAsync);
+}
+
+private void HandleConnectionLost(object sender, EventArgs e)
+{
+    ShowReconnectOverlay = true;
+    // little simplified method from base class
+    InvokeAsyncStateHasChanged();
+}
 ```
 
 ## BzTimerComponent

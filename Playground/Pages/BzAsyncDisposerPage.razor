@@ -1,0 +1,51 @@
+@page "/BzAsyncDisposer"
+@using Playground.Models
+@inject ScopedCounterWithTimer CounterWithTimer
+
+<h3>BzDisposerPage</h3>
+
+<p>Use the Disposer-object from the base class to simplify your code!</p>
+<p>Check the log window to see if the timer still ticks and if the dispose actions have been called properly.</p>
+
+<p>ThreadingTimer last tick: @_threadingTimerTick</p>
+<p>
+    <b>ScopedCounterWithTimer:</b> <br/>
+    Count: @CounterWithTimer.Counter <br/>
+    AttachedEventHandlers: @CounterWithTimer.AttachedEventHandlers
+</p>
+
+@code {
+
+    DateTime _threadingTimerTick;
+
+    protected override void OnInitialized()
+    {
+        var threadingTimer = new Timer(TimerTick, null, 1000, 2000);
+        Disposer.Add(threadingTimer);
+
+        CounterWithTimer.CounterChanged += HandleCounterChanged;
+        Disposer.Add(() => CounterWithTimer.CounterChanged -= HandleCounterChanged);
+        
+        Disposer.Add(() => Logger.LogInformation("Dispose action was called at " + DateTime.Now));
+        Disposer.Add(async () =>
+        {
+            await Task.Delay(1000);
+            Logger.LogInformation("Async dispose action was called at " + DateTime.Now);
+        });
+
+        base.OnInitialized();
+    }
+
+    private void HandleCounterChanged(object? sender, EventArgs e)
+    {
+        InvokeAsyncStateHasChanged();
+    }
+
+    private void TimerTick(object? state)
+    {
+        _threadingTimerTick = DateTime.Now;
+        Logger.LogInformation("Timer ticks");
+        InvokeAsyncStateHasChanged();
+    }
+
+}

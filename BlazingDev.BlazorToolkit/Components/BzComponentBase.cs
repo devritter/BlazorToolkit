@@ -1,12 +1,14 @@
+using BlazingDev.BlazingExtensions.BlazingUtilities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
 namespace BlazingDev.BlazorToolkit.Components;
 
-public class BzComponentBase : ComponentBase, IDisposable
+public class BzComponentBase : ComponentBase, IAsyncDisposable
 {
     [Inject] private ILoggerFactory LoggerFactory { get; set; } = null!;
     private ILogger? _componentLogger;
+    private BzAsyncDisposer? _disposer;
 
     protected ILogger Logger
     {
@@ -22,19 +24,31 @@ public class BzComponentBase : ComponentBase, IDisposable
         }
     }
 
+    protected BzAsyncDisposer Disposer => _disposer ??= new();
+
     protected void InvokeAsyncStateHasChanged()
     {
         InvokeAsync(StateHasChanged);
     }
 
-    void IDisposable.Dispose()
+    async ValueTask IAsyncDisposable.DisposeAsync()
     {
+        if (_disposer != null)
+        {
+            await _disposer.DisposeAsync().ConfigureAwait(false);
+        }
+        
+        // ReSharper disable once MethodHasAsyncOverload
         OnDispose();
+        await OnDisposeAsync().ConfigureAwait(false);
     }
 
     protected virtual void OnDispose()
     {
     }
 
-    // todo IAsyncDisposable auch implementieren?
+    protected virtual ValueTask OnDisposeAsync()
+    {
+        return default;
+    }
 }
