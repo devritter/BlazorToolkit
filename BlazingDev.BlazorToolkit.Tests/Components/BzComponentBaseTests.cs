@@ -24,6 +24,7 @@ public class BzComponentBaseTests
         // continuous access should return same instance
         BzReflection.GetValue<ILogger>(sut, "Logger").Should().Be(logger);
     }
+
     [Fact]
     public void Disposer_IsCreatedOnFirstAccess()
     {
@@ -45,11 +46,35 @@ public class BzComponentBaseTests
         var sut = new CheckIsInitializedComponent();
         BzReflection.SetValue(sut, "_hasPendingQueuedRender", true); // to skip rendering
         sut.IsInitialized.Should().BeFalse();
+
+        var task = sut.SetParametersAsync(ParameterView.Empty);
         sut.IsInitialized.Should().BeFalse();
-        await sut.SetParametersAsync(ParameterView.Empty);
+        sut.OnInitializedSemaphore.Release();
+        await task;
         sut.IsInitialized.Should().BeTrue();
 
         // on subsequent calls everything should already be initialized
+        sut.ExpectedIsInitialized = true;
+        await sut.SetParametersAsync(ParameterView.Empty);
+    }
+
+    [Fact]
+    public async Task IsInitialized_IsNotPrematurelySet_IfNewParametersAreReceived_BeforeInitializationHasFinished()
+    {
+        var sut = new CheckIsInitializedComponent();
+        BzReflection.SetValue(sut, "_hasPendingQueuedRender", true); // to skip rendering
+
+        var task = sut.SetParametersAsync(ParameterView.Empty);
+        sut.IsInitialized.Should().BeFalse();
+
+        // can be awaited because it does not run through IsInitializedAsync any more
+        // internally asserts against IsInitialized=false
+        await sut.SetParametersAsync(ParameterView.Empty);
+
+        sut.OnInitializedSemaphore.Release();
+        await task;
+        sut.IsInitialized.Should().BeTrue();
+
         sut.ExpectedIsInitialized = true;
         await sut.SetParametersAsync(ParameterView.Empty);
     }
@@ -58,6 +83,7 @@ public class BzComponentBaseTests
     {
         public new bool IsInitialized => base.IsInitialized;
         public bool ExpectedIsInitialized { get; set; }
+        public SemaphoreSlim OnInitializedSemaphore { get; } = new(0);
 
         protected override void OnInitialized()
         {
@@ -70,6 +96,7 @@ public class BzComponentBaseTests
         protected override async Task OnInitializedAsync()
         {
             IsInitialized.Should().Be(ExpectedIsInitialized);
+            await OnInitializedSemaphore.WaitAsync();
             await base.OnInitializedAsync();
             IsInitialized.Should().Be(ExpectedIsInitialized);
         }

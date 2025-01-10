@@ -34,11 +34,20 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
     /// </summary>
     protected bool IsInitialized { get; private set; }
 
+    private bool _isFirstSetParametersAsyncCall = true;
+
     public override async Task SetParametersAsync(ParameterView parameters)
     {
+        var isThisMethodCallResponsibleForSettingIsInitialized = _isFirstSetParametersAsyncCall;
+        _isFirstSetParametersAsyncCall = false;
+
         await base.SetParametersAsync(parameters);
-        IsInitialized = true;
-        StateHasChanged(); // needed because the last render was with IsInitialized=false
+
+        if (isThisMethodCallResponsibleForSettingIsInitialized)
+        {
+            IsInitialized = true;
+            StateHasChanged(); // needed because the last render was with IsInitialized=false
+        }
     }
 
     protected void InvokeAsyncStateHasChanged()

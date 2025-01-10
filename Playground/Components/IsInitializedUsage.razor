@@ -18,6 +18,7 @@
 @code {
     [Parameter] public int OnInitializedAsyncDelay { get; set; }
     [Parameter] public int OnParametersSetAsyncDelay { get; set; }
+    [Parameter] public object? SomeParameter { get; set; } // of type object so OnParametersSet has to be called by the framework
 
     string _position = "";
     List<int>? _asyncData1 = null;

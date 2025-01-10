@@ -1,22 +1,21 @@
 @page "/IsInitializedDemo"
+@using BlazingDev.BlazorToolkit.Timers
 
 <h3>IsInitialized Demo Page</h3>
+<BzTimerComponent Name="Timer to trigger OnParametersSet" Interval="1000" OnElapsed="() => { }" ShowControls/>
 
+<br/><br/>
 <h5>No delay</h5>
-<IsInitializedUsage OnInitializedAsyncDelay="0" OnParametersSetAsyncDelay="0"/>
+<IsInitializedUsage OnInitializedAsyncDelay="0" OnParametersSetAsyncDelay="0" SomeParameter="DateTime.UtcNow"/>
 
 <br/>
 <h5>3s in OnInitializedAsync</h5>
-<IsInitializedUsage OnInitializedAsyncDelay="3000" OnParametersSetAsyncDelay="0"/>
+<IsInitializedUsage OnInitializedAsyncDelay="3000" OnParametersSetAsyncDelay="0" SomeParameter="DateTime.UtcNow"/>
 
 <br/>
 <h5>4s in OnParametersSetAsync</h5>
-<IsInitializedUsage OnInitializedAsyncDelay="0" OnParametersSetAsyncDelay="4000"/>
+<IsInitializedUsage OnInitializedAsyncDelay="0" OnParametersSetAsyncDelay="4000" SomeParameter="DateTime.UtcNow"/>
 
 <br/>
 <h5>3s in OnInitializedAsync+OnParametersSetAsync</h5>
-<IsInitializedUsage OnInitializedAsyncDelay="3000" OnParametersSetAsyncDelay="3000"/>
-
-@code {
-
-}
+<IsInitializedUsage OnInitializedAsyncDelay="3000" OnParametersSetAsyncDelay="3000" SomeParameter="DateTime.UtcNow"/>
