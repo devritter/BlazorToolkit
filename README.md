@@ -117,3 +117,21 @@ var style = new BzCssStyleBuilder()
     .Add(Style) // from component parameter
     .Build();
 ```
+
+## BzRenderMode
+
+Predefined render modes without prerender
+
+### Usage
+
+**per component, e.g. in `App.razor`:**
+
+```
+<Routes @rendermode="BzRenderMode.InteractiveServerNoPrerender"/>
+```
+
+If you add the following line in `_Imports.razor`, you can omit the `BzRenderMode` prefix:
+
+```
+@using static BlazingDev.BlazorToolkit.Components.BzRenderMode
+```
