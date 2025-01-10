@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="Playground.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
-    <HeadOutlet @rendermode="InteractiveServer"/>
+    <HeadOutlet @rendermode="InteractiveServerNoPrerender"/>
 </head>
 
 <body>
-<Routes @rendermode="InteractiveServer"/>
+<Routes @rendermode="InteractiveServerNoPrerender"/>
 <script src="_framework/blazor.web.js"></script>
 </body>
 
