@@ -16,7 +16,7 @@ public class ScopedCounterWithTimer : IDisposable
     public int Counter { get; private set; }
     public int AttachedEventHandlers => CounterChanged?.GetInvocationList().Length ?? 0;
 
-    public event EventHandler CounterChanged;
+    public event EventHandler? CounterChanged;
 
     private void TimerOnElapsed(object? sender, ElapsedEventArgs e)
     {

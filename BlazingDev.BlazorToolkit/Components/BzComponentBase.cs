@@ -24,7 +24,22 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
         }
     }
 
-    protected BzAsyncDisposer Disposer => _disposer ??= new();
+    /// <summary>
+    /// Collects disposables (and Actions) that will be disposed when the component gets disposed
+    /// </summary>
+    protected BzAsyncDisposer Disposer => _disposer ??= new BzAsyncDisposer();
+
+    /// <summary>
+    /// return true when all component initialization methods have been called once.
+    /// </summary>
+    protected bool IsInitialized { get; private set; }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+        IsInitialized = true;
+        StateHasChanged(); // needed because the last render was with IsInitialized=false
+    }
 
     protected void InvokeAsyncStateHasChanged()
     {
@@ -37,7 +52,7 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
         {
             await _disposer.DisposeAsync().ConfigureAwait(false);
         }
-        
+
         // ReSharper disable once MethodHasAsyncOverload
         OnDispose();
         await OnDisposeAsync().ConfigureAwait(false);

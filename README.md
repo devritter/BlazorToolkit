@@ -7,6 +7,7 @@ Useful components and utilities for Blazor developers
 Your new component base class with:
 
 * typed `Logger` instance
+* `IsInitialized` property to simplify your rendering logic for asynchronously initialized components!
 * `Disposer` object to register disposables at creation time!
 * `InvokeAsyncStateHasChanged()` method
 
