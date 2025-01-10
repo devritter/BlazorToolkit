@@ -4,6 +4,10 @@
     cursor: pointer;
 }
 
+.bg-lime {
+    background-color: lime;
+}
+
 
 /* default styles from project template */
 

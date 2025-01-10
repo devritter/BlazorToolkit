@@ -1,0 +1,44 @@
+@{
+    var cssClass = BzCssClassBuilder.Create().AddIf(IsInitialized, "bg-lime").ToString();
+}
+
+<MyCard Class="@cssClass">
+    <h3>IsInitialized Usage</h3>
+    <span>Position: @_position</span>
+    <span>IsInitialized? @IsInitialized</span>
+    <span>Last render: @DateTime.Now.ToLongTimeString()</span>
+    @if (IsInitialized)
+    {
+        // force-access fields, that should only be possible after full initialization
+        _asyncData1!.ForEach(x => { });
+        _asyncData2!.ForEach(x => { });
+    }
+</MyCard>
+
+@code {
+    [Parameter] public int OnInitializedAsyncDelay { get; set; }
+    [Parameter] public int OnParametersSetAsyncDelay { get; set; }
+
+    string _position = "";
+    List<int>? _asyncData1 = null;
+    List<string>? _asyncData2 = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _position = "Start of OnInitializedAsync, starting delay...";
+        await Task.Delay(OnInitializedAsyncDelay);
+        _asyncData1 = new List<int>();
+        _position = "End of OnInitializedAsync, calling base method...";
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _position = "Start of OnParametersSetAsync, starting delay...";
+        await Task.Delay(OnParametersSetAsyncDelay);
+        _asyncData2 = new List<string>();
+        _position = "End of OnParametersSetAsync, calling base method...";
+        await base.OnParametersSetAsync();
+    }
+
+}

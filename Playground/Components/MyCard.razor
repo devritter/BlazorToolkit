@@ -1,8 +1,9 @@
-<div class="my-card"
+<div class="my-card @Class"
      style="border: 2px solid silver; border-radius: 5px; padding: 5px 10px; display: flex; flex-direction: column; gap: 5px;">
     @ChildContent
 </div>
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
 }
