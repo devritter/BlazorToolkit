@@ -73,8 +73,8 @@ BzComponentTool.TryGetRoute(typeof(PotentiallyRoutableComponent));
 BzComponentTool.GetRoute<SomePage>();
 BzComponentTool.GetRoute(typeof(SomePage));
 // returns zero-to-many items
-BzComponentTool.GetRoutes<PageWithMultipleRoutes>();
-BzComponentTool.GetRoutes(typeof(PageWithMultipleRoutes));
+BzComponentTool.TryGetRoutes<PageWithMultipleRoutes>();
+BzComponentTool.TryGetRoutes(typeof(PageWithMultipleRoutes));
 ```
 
 ## BzTimerComponent
