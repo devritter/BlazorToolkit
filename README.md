@@ -60,6 +60,23 @@ private void HandleConnectionLost(object sender, EventArgs e)
 }
 ```
 
+## BzComponentTool
+
+Static class with methods for retrieving a component's route (`@page "/this-is-the-route"`). \
+Useful if you want to create links to other components and you don't want to have magic strings in your code.
+
+```csharp
+ // returns null for "simple" components or the first defined rounte
+BzComponentTool.TryGetRoute<PotentiallyRoutableComponent>();
+BzComponentTool.TryGetRoute(typeof(PotentiallyRoutableComponent));
+// returns the first defined route or throws for "simple" components
+BzComponentTool.GetRoute<SomePage>();
+BzComponentTool.GetRoute(typeof(SomePage));
+// returns zero-to-many items
+BzComponentTool.GetRoutes<PageWithMultipleRoutes>();
+BzComponentTool.GetRoutes(typeof(PageWithMultipleRoutes));
+```
+
 ## BzTimerComponent
 
 A blazor component that wraps a Timer instance. \
