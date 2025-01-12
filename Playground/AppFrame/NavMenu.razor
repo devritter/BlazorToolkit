@@ -8,10 +8,9 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        @* <NavLink class="nav-link" href="" Match="NavLinkMatch.All"> *@
-        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<HomePage>()"/>
-        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<BzTimerComponentDemoPage>()"/>
-        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<BzAsyncDisposerDemoPage>()"/>
-        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<IsInitializedDemoPage>()"/>
+        @foreach (var item in BzComponentTool.GetAllMenuItemsFromAssembly(GetType().Assembly))
+        {
+            <MyNavItem MenuItem="item"/>
+        }
     </nav>
 </div>
