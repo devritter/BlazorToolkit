@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 
@@ -59,5 +60,53 @@ public static class BzComponentTool
     public static string? TryGetRoute(Type type)
     {
         return TryGetRoutes(type).FirstOrDefault();
+    }
+
+    public static BzMenuItemModel GetMenuItem<T>() where T : IComponent
+    {
+        return TryGetMenuItemCore(typeof(T), true)!;
+    }
+
+    public static BzMenuItemModel GetMenuItem(Type type)
+    {
+        return TryGetMenuItemCore(type, true)!;
+    }
+
+    public static BzMenuItemModel? TryGetMenuItem<T>() where T : IComponent
+    {
+        return TryGetMenuItemCore(typeof(T), false);
+    }
+
+    public static BzMenuItemModel? TryGetMenuItem(Type type)
+    {
+        return TryGetMenuItemCore(type, false);
+    }
+
+    private static BzMenuItemModel? TryGetMenuItemCore(Type type, bool allowExceptions)
+    {
+        var route = allowExceptions ? GetRoute(type) : TryGetRoute(type);
+        if (route == null && !allowExceptions)
+        {
+            return null;
+        }
+
+        var attribute = type.GetCustomAttribute<BzMenuItemAttribute>();
+        if (attribute == null)
+        {
+            if (allowExceptions)
+            {
+                throw new InvalidOperationException($"Component '{type.Name}' has no BzMenuItemAttribute defined");
+            }
+
+            return null;
+        }
+
+        return new BzMenuItemModel(
+            attribute.Name,
+            attribute.Icon,
+            attribute.Sorting,
+            route,
+            attribute.MatchMode,
+            type);
     }
 }

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
+using IComponent = System.ComponentModel.IComponent;
 
 namespace BlazingDev.BlazorToolkit.Tests.Components;
 
@@ -52,6 +54,51 @@ public class BzComponentToolTests
         BzComponentTool.TryGetRoute(typeof(MultipleRouteComponent)).Should().Be("/my-first-route");
     }
 
+    [Fact]
+    public void GetMenuItem_ReturnsRouteAndMenuItemAttributeData()
+    {
+        var menuItem = BzComponentTool.GetMenuItem<ShoppingCartPage>();
+        menuItem.Name.Should().Be("Shopping Cart");
+        menuItem.Icon.Should().Be("cart");
+        menuItem.Sorting.Should().Be(900);
+        menuItem.Route.Should().Be("/cart");
+        menuItem.Type.Should().Be(typeof(ShoppingCartPage));
+        menuItem.MatchMode.Should().Be(NavLinkMatch.All);
+
+        BzComponentTool.GetMenuItem(typeof(ShoppingCartPage)).Should().Be(menuItem);
+    }
+
+    [Fact]
+    public void GetMenuItem_ThrowsIfComponentHasNoRouteOrNoBzMenuItemAttribute()
+    {
+        Assert.Throws<InvalidOperationException>(() => BzComponentTool.GetMenuItem<ComponentWithOnlyBzMenuAttribute>())
+            .Message.Should().Match("*no*route*");
+        Assert.Throws<InvalidOperationException>(() => BzComponentTool.GetMenuItem<SingleRouteComponent>())
+            .Message.Should().Match("*no*BzMenuItemAttribute*");
+    }
+
+    [Fact]
+    public void TryGetMenuItem_ReturnsNullInsteadOfThrowingException()
+    {
+        // the "good case" first
+        var menuItem = BzComponentTool.TryGetMenuItem<ShoppingCartPage>();
+        menuItem.Should().NotBeNull();
+        menuItem!.Name.Should().Be("Shopping Cart");
+        menuItem.Icon.Should().Be("cart");
+        menuItem.Sorting.Should().Be(900);
+        menuItem.Route.Should().Be("/cart");
+        menuItem.MatchMode.Should().Be(NavLinkMatch.All);
+        menuItem.Type.Should().Be(typeof(ShoppingCartPage));
+
+        BzComponentTool.TryGetMenuItem(typeof(ShoppingCartPage)).Should().Be(menuItem);
+
+        BzComponentTool.TryGetMenuItem<ComponentWithOnlyBzMenuAttribute>().Should().BeNull();
+        BzComponentTool.TryGetMenuItem(typeof(ComponentWithOnlyBzMenuAttribute)).Should().BeNull();
+
+        BzComponentTool.TryGetMenuItem<SingleRouteComponent>().Should().BeNull();
+        BzComponentTool.TryGetMenuItem(typeof(SingleRouteComponent)).Should().BeNull();
+    }
+
     private class NoRouteComponent : ComponentBase
     {
     }
@@ -64,6 +111,17 @@ public class BzComponentToolTests
     [Route("/my-first-route")]
     [Route("/my-second-route")]
     private class MultipleRouteComponent : ComponentBase
+    {
+    }
+
+    [Route("/cart")]
+    [BzMenuItem(Name = "Shopping Cart", Icon = "cart", Sorting = 900, MatchMode = NavLinkMatch.All)]
+    private class ShoppingCartPage : ComponentBase
+    {
+    }
+
+    [BzMenuItem(Name = "About")]
+    private class ComponentWithOnlyBzMenuAttribute : ComponentBase
     {
     }
 }
