@@ -1,5 +1,6 @@
 @page "/IsInitializedDemo"
 @using BlazingDev.BlazorToolkit.Timers
+@attribute [BzMenuItem(Name = "IsInitialized", Icon = "bi-list-nested-nav-menu", Sorting = 10)]
 
 <h3>IsInitialized Demo Page</h3>
 <BzTimerComponent Name="Timer to trigger OnParametersSet" Interval="1000" OnElapsed="() => { }" ShowControls/>

@@ -1,0 +1,9 @@
+<div class="nav-item px-3">
+    <NavLink class="nav-link" href="@MenuItem.Route" Match="MenuItem.MatchMode">
+        <span class="bi @MenuItem.Icon" aria-hidden="true"></span> @MenuItem.Name
+    </NavLink>
+</div>
+
+@code {
+    [Parameter] [EditorRequired] public required BzMenuItemModel MenuItem { get; set; }
+}

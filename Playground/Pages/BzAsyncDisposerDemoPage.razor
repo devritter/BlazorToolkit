@@ -1,6 +1,7 @@
 @page "/BzAsyncDisposer"
 @using Playground.Models
 @inject ScopedCounterWithTimer CounterWithTimer
+@attribute [BzMenuItem(Name = "BzAsyncDisposer", Icon = "bi-list-nested-nav-menu", Sorting = 20)]
 
 <h3>BzDisposerPage</h3>
 
@@ -25,7 +26,7 @@
 
         CounterWithTimer.CounterChanged += HandleCounterChanged;
         Disposer.Add(() => CounterWithTimer.CounterChanged -= HandleCounterChanged);
-        
+
         Disposer.Add(() => Logger.LogInformation("Dispose action was called at " + DateTime.Now));
         Disposer.Add(async () =>
         {

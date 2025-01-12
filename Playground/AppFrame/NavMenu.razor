@@ -8,28 +8,10 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@(BzComponentTool.GetRoute<BzTimerComponentDemoPage>())">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> BzTimerComponents
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@BzComponentTool.GetRoute(typeof(BzAsyncDisposerDemoPage))">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> BzAsyncDisposer
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="IsInitializedDemo">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> IsInitialized
-            </NavLink>
-        </div>
+        @* <NavLink class="nav-link" href="" Match="NavLinkMatch.All"> *@
+        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<HomePage>()"/>
+        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<BzTimerComponentDemoPage>()"/>
+        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<BzAsyncDisposerDemoPage>()"/>
+        <MyNavItem MenuItem="BzComponentTool.GetMenuItem<IsInitializedDemoPage>()"/>
     </nav>
 </div>
