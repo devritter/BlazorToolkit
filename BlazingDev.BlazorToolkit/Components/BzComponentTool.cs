@@ -109,4 +109,20 @@ public static class BzComponentTool
             attribute.MatchMode,
             type);
     }
+
+    /// <summary>
+    /// Returns BzMenuItemModels for every public type inside the given assembly
+    /// that has a Route (@page "/this-is-the-route" or [RouteAttribute]) and [BzMenuItemAttribute] specified.
+    /// The returned list is sorted by the BzMenuItemAttribute.Sorting property.
+    /// </summary>
+    public static List<BzMenuItemModel> GetAllMenuItemsFromAssembly(Assembly assembly)
+    {
+        var types = assembly.GetExportedTypes();
+        var result = types
+            .Select(TryGetMenuItem)
+            .WhereNotNull()
+            .OrderBy(x => x.Sorting)
+            .ToList();
+        return result;
+    }
 }

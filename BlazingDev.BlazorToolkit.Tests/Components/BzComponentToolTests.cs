@@ -63,9 +63,12 @@ public class BzComponentToolTests
         menuItem.Sorting.Should().Be(900);
         menuItem.Route.Should().Be("/cart");
         menuItem.Type.Should().Be(typeof(ShoppingCartPage));
-        menuItem.MatchMode.Should().Be(NavLinkMatch.All);
+        menuItem.MatchMode.Should().Be(NavLinkMatch.Prefix);
 
         BzComponentTool.GetMenuItem(typeof(ShoppingCartPage)).Should().Be(menuItem);
+
+        var homePage = BzComponentTool.GetMenuItem<HomePage>();
+        homePage.MatchMode.Should().Be(NavLinkMatch.All);
     }
 
     [Fact]
@@ -87,7 +90,7 @@ public class BzComponentToolTests
         menuItem.Icon.Should().Be("cart");
         menuItem.Sorting.Should().Be(900);
         menuItem.Route.Should().Be("/cart");
-        menuItem.MatchMode.Should().Be(NavLinkMatch.All);
+        menuItem.MatchMode.Should().Be(NavLinkMatch.Prefix);
         menuItem.Type.Should().Be(typeof(ShoppingCartPage));
 
         BzComponentTool.TryGetMenuItem(typeof(ShoppingCartPage)).Should().Be(menuItem);
@@ -99,29 +102,47 @@ public class BzComponentToolTests
         BzComponentTool.TryGetMenuItem(typeof(SingleRouteComponent)).Should().BeNull();
     }
 
-    private class NoRouteComponent : ComponentBase
+    [Fact]
+    public void GetAllMenuItemsFromAssembly_ReturnsAllPagesWithBzMenuItemAttribute()
+    {
+        var items = BzComponentTool.GetAllMenuItemsFromAssembly(GetType().Assembly);
+        var homePage = BzComponentTool.GetMenuItem<HomePage>();
+        var shoppingCartPage = BzComponentTool.GetMenuItem<ShoppingCartPage>();
+        items.Count.Should().Be(2);
+        items.Should().Equal(homePage, shoppingCartPage);
+    }
+
+    // components below are public because that's needed for the "GetAllMenuItemsFromAssembly" test
+
+    public class NoRouteComponent : ComponentBase
     {
     }
 
     [Route("/my-route")]
-    private class SingleRouteComponent : ComponentBase
+    public class SingleRouteComponent : ComponentBase
     {
     }
 
     [Route("/my-first-route")]
     [Route("/my-second-route")]
-    private class MultipleRouteComponent : ComponentBase
+    public class MultipleRouteComponent : ComponentBase
     {
     }
 
     [Route("/cart")]
-    [BzMenuItem(Name = "Shopping Cart", Icon = "cart", Sorting = 900, MatchMode = NavLinkMatch.All)]
-    private class ShoppingCartPage : ComponentBase
+    [BzMenuItem(Name = "Shopping Cart", Icon = "cart", Sorting = 900)]
+    public class ShoppingCartPage : ComponentBase
     {
     }
 
     [BzMenuItem(Name = "About")]
-    private class ComponentWithOnlyBzMenuAttribute : ComponentBase
+    public class ComponentWithOnlyBzMenuAttribute : ComponentBase
+    {
+    }
+
+    [Route("/")]
+    [BzMenuItem(Name = "Home", Icon = "house", Sorting = 0, MatchMode = NavLinkMatch.All)]
+    public class HomePage : ComponentBase
     {
     }
 }

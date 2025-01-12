@@ -62,7 +62,11 @@ private void HandleConnectionLost(object sender, EventArgs e)
 
 ## BzComponentTool
 
-Static class with methods for retrieving a component's route (`@page "/this-is-the-route"`). \
+Provides utility methods regarding components.
+
+### GetRoute
+
+With the following methods you can retrieve a component's route (`@page "/this-is-the-route"`). \
 Useful if you want to create links to other components and you don't want to have magic strings in your code.
 
 ```csharp
@@ -75,6 +79,27 @@ BzComponentTool.GetRoute(typeof(SomePage));
 // returns zero-to-many items
 BzComponentTool.TryGetRoutes<PageWithMultipleRoutes>();
 BzComponentTool.TryGetRoutes(typeof(PageWithMultipleRoutes));
+```
+
+### GetMenuItem
+
+Use the `BzMenuItemAttribute` to specify menu items at component level. \
+For extra laziness you can use the `BzComponentTool.GetAllMenuItemsFromAssembly(assembly)` method :)
+
+```csharp
+@page "/about"
+@attribute [BzMenuItem(Name = "About", Icon = "people", Sorting = 500)]
+```
+
+```csharp
+BzComponentTool.GetMenuItem<AboutPage>();    // requires ( @page OR [Route] ) AND [BzMenuItem]
+BzComponentTool.TryGetMenuItem<AboutPage>(); // returns null if anything required is missing
+
+// NavMenu.razor
+@foreach (var item in BzComponentTool.GetAllMenuItemsFromAssembly(GetType().Assembly))
+{
+    <MyNavItem MenuItem="item"/>
+}
 ```
 
 ## BzTimerComponent
