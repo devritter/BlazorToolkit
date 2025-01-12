@@ -1,7 +1,7 @@
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace Playground.Models;
+namespace Playground.BzAsyncDisposerFeature;
 
 public class ScopedCounterWithTimer : IDisposable
 {
