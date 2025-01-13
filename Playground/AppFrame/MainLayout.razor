@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using Fluxor.Blazor.Web
+@using UnhandledExceptionEventArgs = Fluxor.Exceptions.UnhandledExceptionEventArgs
+@inherits LayoutComponentBase
+
+<StoreInitializer UnhandledException="HandleFluxorException"/>
 
 <div class="page">
     <div class="sidebar">
@@ -21,3 +25,12 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+
+    private void HandleFluxorException(UnhandledExceptionEventArgs obj)
+    {
+        Console.Error.WriteLine();
+    }
+
+}

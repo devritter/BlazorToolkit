@@ -1,11 +1,17 @@
+using BlazingDev.BlazorToolkit.FluxorIntegration;
+using Fluxor;
 using Playground.AppFrame;
 using Playground.BzAsyncDisposerFeature;
+using Playground.FluxorIntegrationFeature;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddFluxor(o => o.ScanAssemblies(typeof(CounterState).Assembly));
+builder.Services.AddTransient<FluxorIntegration>();
 
 builder.Services.AddScoped<ScopedCounterWithTimer>();
 

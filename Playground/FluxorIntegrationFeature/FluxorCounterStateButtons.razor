@@ -1,0 +1,27 @@
+@using Fluxor
+@inject IDispatcher Dispatcher
+
+<MyCard>
+    <button @onclick="HandleIncrement">Increment</button>
+    <button @onclick="HandleIncrementIn1s">Increment in 1s</button>
+    <button @onclick="HandleIncrementIn3s">Increment in 3s</button>
+</MyCard>
+
+@code {
+
+    private void HandleIncrement()
+    {
+        Dispatcher.Dispatch(new IncrementCounterAction());
+    }
+
+    private void HandleIncrementIn1s()
+    {
+        Dispatcher.Dispatch(new IncrementCounterWithDelayAction(1000));
+    }
+
+    private void HandleIncrementIn3s()
+    {
+        Dispatcher.Dispatch(new IncrementCounterWithDelayAction(3000));
+    }
+
+}

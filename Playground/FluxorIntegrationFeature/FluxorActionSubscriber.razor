@@ -1,0 +1,30 @@
+@using BlazingDev.BlazorToolkit.FluxorIntegration
+@inject FluxorIntegration FluxorIntegration
+
+<MyCard>
+    <h5>Action subscriber</h5>
+    @if (_asyncInProgress)
+    {
+        <h5>Async increment in progress!</h5>
+    }
+</MyCard>
+
+@code {
+
+    bool _asyncInProgress;
+
+    protected override void OnInitialized()
+    {
+        FluxorIntegration.SubscribeToAction<IncrementCounterWithDelayAction>(HandleDelayedIncrement);
+        base.OnInitialized();
+    }
+
+    private async Task HandleDelayedIncrement(IncrementCounterWithDelayAction obj)
+    {
+        _asyncInProgress = true;
+        StateHasChanged();
+        await Task.Delay(obj.DelayMs);
+        _asyncInProgress = false;
+    }
+
+}

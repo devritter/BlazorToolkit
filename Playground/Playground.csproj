@@ -8,7 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BlazingDev.BlazorToolkit\BlazingDev.BlazorToolkit.csproj" />
+        <ProjectReference Include="..\BlazingDev.BlazorToolkit.FluxorIntegration\BlazingDev.BlazorToolkit.FluxorIntegration.csproj"/>
+        <ProjectReference Include="..\BlazingDev.BlazorToolkit\BlazingDev.BlazorToolkit.csproj"/>
     </ItemGroup>
 
 </Project>

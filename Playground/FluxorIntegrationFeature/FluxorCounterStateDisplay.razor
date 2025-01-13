@@ -1,0 +1,12 @@
+@using BlazingDev.BlazorToolkit.FluxorIntegration
+@using Fluxor
+@inject IState<CounterState> CounterState
+@inject FluxorIntegration FluxorIntegration
+
+<MyCard>
+    Current counter state: @CounterState.Value.CurrentCount
+</MyCard>
+
+@code {
+
+}
