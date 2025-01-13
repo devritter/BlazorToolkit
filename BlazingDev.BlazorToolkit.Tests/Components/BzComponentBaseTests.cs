@@ -1,4 +1,5 @@
 using BlazingDev.BlazingExtensions.BlazingUtilities;
+using BlazingDev.BlazorToolkit.Components.Integrations;
 using BlazingDev.BlazorToolkit.Tests.TestSupport;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -79,6 +80,23 @@ public class BzComponentBaseTests
         await sut.SetParametersAsync(ParameterView.Empty);
     }
 
+    [Fact]
+    public async Task SetParametersAsync_InitializesPossibleIntegrations()
+    {
+        // Arrange
+        var sut = new ComponentWithIntegrationsSubclass();
+        BzReflection.SetValue(sut, "_hasPendingQueuedRender", true); // to skip rendering
+
+        // Act
+        await sut.SetParametersAsync(ParameterView.Empty);
+
+        // Assert
+        sut.Integration1.Ctx.Should().NotBeNull();
+        sut.Integration1.Ctx!.Component.Should().BeSameAs(sut);
+        BzReflection.GetValue<TestIntegration>(sut, "_integration2")!.Ctx.Should().NotBeNull();
+        BzReflection.GetValue<TestIntegration>(sut, "_integration3").Should().BeNull();
+    }
+
     private class CheckIsInitializedComponent : BzComponentBase
     {
         public new bool IsInitialized => base.IsInitialized;
@@ -113,6 +131,29 @@ public class BzComponentBaseTests
             IsInitialized.Should().Be(ExpectedIsInitialized);
             await base.OnParametersSetAsync();
             IsInitialized.Should().Be(ExpectedIsInitialized);
+        }
+    }
+
+    private class ComponentWithIntegrations : BzComponentBase
+    {
+        public TestIntegration Integration1 { get; set; } = new();
+        private TestIntegration _integration2 = new();
+        private TestIntegration _integration3 = null!;
+    }
+
+    // just to also test inheritance
+    private class ComponentWithIntegrationsSubclass : ComponentWithIntegrations
+    {
+    }
+
+    private class TestIntegration : IBzComponentIntegration
+    {
+        public BzComponentIntegrationInitializationContext? Ctx { get; set; }
+
+        public Task InitializeAsync(BzComponentIntegrationInitializationContext ctx)
+        {
+            Ctx = ctx;
+            return Task.CompletedTask;
         }
     }
 }

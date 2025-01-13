@@ -1,10 +1,11 @@
 using BlazingDev.BlazingExtensions.BlazingUtilities;
+using BlazingDev.BlazorToolkit.Components.Integrations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
 namespace BlazingDev.BlazorToolkit.Components;
 
-public class BzComponentBase : ComponentBase, IAsyncDisposable
+public class BzComponentBase : ComponentBase, IAsyncDisposable, IBzComponentInternals
 {
     [Inject] private ILoggerFactory LoggerFactory { get; set; } = null!;
     private ILogger? _componentLogger;
@@ -29,6 +30,8 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
     /// </summary>
     protected BzAsyncDisposer Disposer => _disposer ??= new BzAsyncDisposer();
 
+    protected bool IsDisposed { get; set; }
+
     /// <summary>
     /// return true when all component initialization methods have been called once.
     /// </summary>
@@ -38,8 +41,13 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var isThisMethodCallResponsibleForSettingIsInitialized = _isFirstSetParametersAsyncCall;
-        _isFirstSetParametersAsyncCall = false;
+        var isThisMethodCallResponsibleForSettingIsInitialized = false;
+        if (_isFirstSetParametersAsyncCall)
+        {
+            _isFirstSetParametersAsyncCall = false;
+            isThisMethodCallResponsibleForSettingIsInitialized = true;
+            await BzComponentIntegrationHelper.InitializeIntegrations(this);
+        }
 
         await base.SetParametersAsync(parameters);
 
@@ -57,6 +65,13 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
+        if (IsDisposed)
+        {
+            return;
+        }
+
+        IsDisposed = true;
+
         if (_disposer != null)
         {
             await _disposer.DisposeAsync().ConfigureAwait(false);
@@ -75,4 +90,27 @@ public class BzComponentBase : ComponentBase, IAsyncDisposable
     {
         return default;
     }
+
+    #region IComponentInternals
+
+    Task IBzComponentInternals.InvokeAsync(Action workItem)
+    {
+        return InvokeAsync(workItem);
+    }
+
+    Task IBzComponentInternals.InvokeAsync(Func<Task> workItem)
+    {
+        return InvokeAsync(workItem);
+    }
+
+    void IBzComponentInternals.StateHasChanged()
+    {
+        StateHasChanged();
+    }
+
+    ILogger IBzComponentInternals.Logger => Logger;
+    bool IBzComponentInternals.IsDisposed => IsDisposed;
+    BzAsyncDisposer IBzComponentInternals.Disposer => Disposer;
+
+    #endregion IComponentInternals
 }
