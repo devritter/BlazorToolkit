@@ -4,13 +4,17 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Version>0.1.0</Version>
+        <Authors>devritter</Authors>
+        <Description>Fluxor integration for BzComponentBase</Description>
+        <RepositoryUrl>https://github.com/devritter/BlazorToolkit</RepositoryUrl>
+        <PackageTags>blazor utility productivity state-management</PackageTags>
+        <PackageIcon>blazingdev_logo_512.png</PackageIcon>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BlazingDev.BlazorToolkit\BlazingDev.BlazorToolkit.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
+        <PackageReference Include="BlazingDev.BlazorToolkit" Version="0.4.0" />
         <PackageReference Include="Fluxor.Blazor.Web" Version="6.5.2"/>
     </ItemGroup>
 
