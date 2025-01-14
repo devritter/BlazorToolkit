@@ -14,8 +14,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BlazingDev.BlazorToolkit" Version="0.4.0" />
         <PackageReference Include="Fluxor.Blazor.Web" Version="6.5.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\BlazingDev.BlazorToolkit\BlazingDev.BlazorToolkit.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="blazingdev_logo_512.png" Pack="True" PackagePath="/"/>
     </ItemGroup>
 
 </Project>

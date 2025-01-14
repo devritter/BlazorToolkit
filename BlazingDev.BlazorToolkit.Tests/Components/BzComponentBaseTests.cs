@@ -138,7 +138,9 @@ public class BzComponentBaseTests
     {
         public TestIntegration Integration1 { get; set; } = new();
         private TestIntegration _integration2 = new();
+#pragma warning disable CS0414 // Field is assigned but its value is never used
         private TestIntegration _integration3 = null!;
+#pragma warning restore CS0414 // Field is assigned but its value is never used
     }
 
     // just to also test inheritance
