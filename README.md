@@ -34,30 +34,48 @@ directory and subdirectories:
 ### Example
 
 ```csharp
-FileStream _fileStream = null;
-
-protected override void OnInitialized()
+@* IsInitialized from base class *@
+@if (IsInitialized)
 {
-    _fileStream = GetFileStream();
-    
-    // BzAsyncDisposer from base class
-    Disposer.Add(_fileStream);
-    
-    var subscription = SubscriptionService.Subscribe("important-messages", HandleImportantMessage);
-    // Logger from base class
-    Logger.LogInformation("Got subscription {SubscriptionId}", subscription.Id);
-    Disposer.Add(subscription);
-    
-    SubscriptionService.ConnectionLost += HandleConnectionLost;
-    Disposer.Add(() => SubscriptionService.ConnectionLost -= HandleConnectionLost);
-    Disposer.Add(SayGoodbyeAsync);
+    // render product and reviews
+}
+else
+{
+    <LoadingSpinner />   
 }
 
-private void HandleConnectionLost(object sender, EventArgs e)
-{
-    ShowReconnectOverlay = true;
-    // little simplified method from base class
-    InvokeAsyncStateHasChanged();
+@code {
+
+    IDisposable? _someDisposable = null;
+    ProductDto? _product = null;
+    List<ProductReviewDto>? _reviews = null;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _someDisposable = GetSomeDisposable();
+        _product = await ProductService.GetProductAsync(5);
+        _reviews = await ProductService.GetProductReviewsAsync(5);
+        
+        // BzAsyncDisposer from base class
+        Disposer.Add(_someDisposable);
+        
+        var subscription = SubscriptionService.Subscribe("important-messages", HandleImportantMessage);
+        // Logger from base class
+        Logger.LogInformation("Got subscription {SubscriptionId}", subscription.Id);
+        Disposer.Add(subscription);
+        
+        SubscriptionService.ConnectionLost += HandleConnectionLost;
+        Disposer.Add(() => SubscriptionService.ConnectionLost -= HandleConnectionLost);
+        Disposer.Add(SayGoodbyeAsync);
+    }
+    
+    private void HandleConnectionLost(object sender, EventArgs e)
+    {
+        ShowReconnectOverlay = true;
+        // little simplified method from base class
+        InvokeAsyncStateHasChanged();
+    }
+
 }
 ```
 
@@ -71,10 +89,10 @@ With the following methods you can retrieve a component's route (`@page "/this-i
 Useful if you want to create links to other components and you don't want to have magic strings in your code.
 
 ```csharp
- // returns null for "simple" components or the first defined rounte
+ // returns the first defined route or null for non-routable components
 BzComponentTool.TryGetRoute<PotentiallyRoutableComponent>();
 BzComponentTool.TryGetRoute(typeof(PotentiallyRoutableComponent));
-// returns the first defined route or throws for "simple" components
+// returns the first defined route or throws for non-routable components
 BzComponentTool.GetRoute<SomePage>();
 BzComponentTool.GetRoute(typeof(SomePage));
 // returns zero-to-many items
@@ -82,7 +100,7 @@ BzComponentTool.TryGetRoutes<PageWithMultipleRoutes>();
 BzComponentTool.TryGetRoutes(typeof(PageWithMultipleRoutes));
 ```
 
-### GetMenuItem
+### BzMenuItem
 
 Use the `BzMenuItemAttribute` to specify menu items at component level. \
 For extra laziness you can use the `BzComponentTool.GetAllMenuItemsFromAssembly(assembly)` method :)
