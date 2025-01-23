@@ -10,6 +10,7 @@ Your new component base class with:
 * `IsInitialized` property to simplify your rendering logic for asynchronously initialized components!
 * `Disposer` object to register disposables at creation time!
 * `InvokeAsyncStateHasChanged()` method
+* Support for [Integrations](https://github.com/devritter/BlazorToolkit/blob/main/docs/integrations.md)
 
 and more to come!
 
