@@ -1,6 +1,5 @@
 using BlazingDev.BlazingExtensions.BlazingUtilities;
 using BlazingDev.BlazorToolkit.Components.Integrations;
-using BlazingDev.BlazorToolkit.Tests.TestSupport;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
