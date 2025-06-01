@@ -11,7 +11,7 @@ public static class BzReflection
     {
         var carrierType = carrierObject.GetType();
         var desiredType = typeof(T);
-        
+
         var member = GetRequiredPropertyOrField(carrierType, memberName);
         var value = member.Item1?.GetValue(carrierObject) ?? member.Item2?.GetValue(carrierObject);
 
@@ -23,11 +23,11 @@ public static class BzReflection
                 // then returning null is OK
                 return default;
             }
-            
+
             // better than a NullReferenceException
             throw new InvalidCastException();
         }
-        
+
         return (T?)value;
     }
 
@@ -61,5 +61,49 @@ public static class BzReflection
 
         throw new InvalidOperationException(
             $"The property or field '{memberName}' could not be found on type {type.Name}.");
+    }
+
+    private static Dictionary<Type, string> _shortTypeNameCache = new()
+    {
+        { typeof(object), "object" },
+        { typeof(string), "string" },
+        { typeof(int), "int" },
+        { typeof(uint), "uint" },
+        { typeof(long), "long" },
+        { typeof(ulong), "ulong" },
+        { typeof(short), "short" },
+        { typeof(ushort), "ushort" },
+        { typeof(byte), "byte" },
+        { typeof(sbyte), "sbyte" },
+        { typeof(bool), "bool" },
+        { typeof(decimal), "decimal" },
+        { typeof(double), "double" },
+        { typeof(float), "float" },
+        { typeof(char), "char" }
+    };
+
+    public static string GetShortTypeName(Type type)
+    {
+        if (_shortTypeNameCache.TryGetValue(type, out var result))
+        {
+            return result;
+        }
+
+        if (type.IsGenericType)
+        {
+            var firstPart = type.Name.Substring(0, type.Name.IndexOf('`'));
+            var genericArguments = type.GetGenericArguments();
+            var genericTypesShort = genericArguments.Select(GetShortTypeName);
+            result = $"{firstPart}<{string.Join(", ", genericTypesShort)}>";
+            return result;
+        }
+
+        if (type.IsArray)
+        {
+            var elementType = type.GetElementType()!;
+            return GetShortTypeName(elementType) + "[]";
+        }
+
+        return type.Name;
     }
 }

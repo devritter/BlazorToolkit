@@ -1,0 +1,36 @@
+.bz-dump {
+    display: inline-block;
+}
+
+.bz-border-1 {
+    border-color: #C00000;
+    background-color: #C00000;
+    border-radius: 6px;
+}
+
+.bz-border-2 {
+    border-color: #FFC000;
+    background-color: #FFC000;
+    border-radius: 4px;
+}
+
+.bz-border-3 {
+    border-color: #FFFF00;
+    background-color: white;
+    border-radius: 2px;
+}
+
+.bz-border-1, .bz-border-2, .bz-border-3 {
+    border-width: 2px;
+    border-style: solid;
+    border-top-left-radius: 0; /* this rule has to be at the end of this file */
+}
+
+.bz-dump-null-value, .bz-dump-type-name, .bz-dump-ienumerable-header {
+    color: silver;
+    font-style: italic;
+}
+
+.bz-dump-inside {
+    min-width: 1em;
+}

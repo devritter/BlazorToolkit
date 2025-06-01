@@ -1,0 +1,56 @@
+<div class="bz-dump">
+    <div class="bz-border-1">
+        <div class="bz-border-2">
+            <div class="bz-border-3">
+                <div class="bz-dump-inside">
+                    @if (Value is null)
+                    {
+                        <span class="bz-dump-null-value">null</span>
+                    }
+                    else if (_vm.IsCollection)
+                    {
+                        <div class="bz-dump-ienumerable-header">
+                            @_vm.Tooltip Count=@(_vm.CollectionCount?.ToString() ?? "?")
+                        </div>
+                    }
+                    else if (_vm.IsPrimitive)
+                    {
+                        <span class="bz-dump-value" title="@_vm.Tooltip">
+                            @Value
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="bz-dump-value" title="@_vm.Tooltip">
+                            @Value
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] [EditorRequired] public object? Value { get; set; }
+    private BzDumpVm _vm = BzDumpVm.NullValue;
+
+    protected override void OnParametersSet()
+    {
+        if (Value == null)
+        {
+            _vm = BzDumpVm.NullValue;
+        }
+        else
+        {
+            var sameValue = ReferenceEquals(Value, _vm.Value);
+            if (!sameValue)
+            {
+                _vm = new BzDumpVm(Value);
+            }
+        }
+
+        base.OnParametersSet();
+    }
+
+}

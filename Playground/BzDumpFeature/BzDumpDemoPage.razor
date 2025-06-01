@@ -1,0 +1,69 @@
+@page "/BzDump"
+@using System.Globalization
+@attribute [BzMenuItem(Name = "BzDump", Icon = "bi-list-nested-nav-menu", Sorting = 20)]
+
+<h3>BzDump</h3>
+<p>Inspect any type of object, like var_dump in PHP or the tooltip when debugging!</p>
+
+<h3>null</h3>
+<BzDump Value="null"/>
+
+<h3>Numbers</h3>
+<BzDump Value="5"/>
+<BzDump Value="3.1415"/>
+<BzDump Value="3.1415f"/>
+
+<h3>Strings</h3>
+@{
+    var shortString = "short string";
+    var longString = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, " +
+                     "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, " +
+                     "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. " +
+                     "Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. " +
+                     "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod " +
+                     "tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. " +
+                     "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, " +
+                     "no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+}
+<BzDump Value="shortString"/>
+<BzDump Value="longString"/>
+
+<h3>DateTime and TimeSpan</h3>
+<BzDump Value="DateTime.Now" />
+<BzDump Value="DateTime.UtcNow" />
+<BzDump Value="DateTime.Now.TimeOfDay" />
+<BzDump Value="DateTimeOffset.Now" />
+<BzDump Value="DateTimeOffset.UtcNow" />
+
+<h3>Arrays and Lists</h3>
+@{
+    var intArray = new int[] { 1, 2, 3, 4, 5 };
+    var stringArray = "I really like BzDump!".Split();
+    var allMenuItems = @BzComponentTool.GetAllMenuItemsFromAssembly(typeof(BzDumpDemoPage).Assembly);
+}
+<BzDump Value="intArray"/>
+<BzDump Value="stringArray"/>
+<BzDump Value="intArray.ToList()"/>
+<BzDump Value="stringArray.ToList()"/>
+<BzDump Value="allMenuItems"/>
+<BzDump Value="allMenuItems.Where(x => true).Take(3)"/>
+
+<h3>Dictionary</h3>
+@{
+    var someDictionary = new Dictionary<int, string>()
+    {
+        { 1, "one" },
+        { 2, "two" },
+        { 3, "three" }
+    };
+}
+<BzDump Value="@someDictionary"/>
+
+<h3>complex objects</h3>
+<BzDump Value="@(BzComponentTool.GetMenuItem<BzDumpDemoPage>())"/>
+<BzDump Value="CultureInfo.CurrentCulture"/>
+<BzDump Value="typeof(MemoryStream)"/>
+
+@code {
+
+}
