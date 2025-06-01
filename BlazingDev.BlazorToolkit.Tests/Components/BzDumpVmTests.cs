@@ -54,16 +54,32 @@ public class BzDumpVmTests
         new BzDumpVm(new Lazy<string>()).Tooltip.Should().Be("Lazy<string>");
     }
 
-    [Theory]
-    [InlineData(5, true)]
-    [InlineData((byte)5, true)]
-    [InlineData(Math.PI, true)]
-    [InlineData("hello", true)]
-    [InlineData('\t', true)]
-    [InlineData(true, true)]
-    public void DetectsPrimitives(object input, bool isPrimitive)
+    [Fact]
+    public void DetectsPrimitives()
     {
-        new BzDumpVm(input).IsPrimitive.Should().Be(isPrimitive);
+        Test(5);
+        Test((byte)5);
+        Test(Math.PI);
+        Test("hello");
+        Test('\t');
+        Test(true);
+        Test(Guid.NewGuid());
+        Test(FileMode.OpenOrCreate);
+
+        void Test(object input)
+        {
+            new BzDumpVm(input).IsPrimitive.Should().BeTrue(input.GetType().Name);
+        }
+    }
+
+    [Fact]
+    public void ToStringAndTooltipContainsNumericValueForEnums()
+    {
+        var value = FileMode.OpenOrCreate;
+        var vm = new BzDumpVm(value);
+        vm.IsPrimitive.Should().BeTrue();
+        vm.ValueToString().Should().Be("OpenOrCreate (4)");
+        vm.Tooltip.Should().Be("FileMode.OpenOrCreate = 4");
     }
 
     [Fact]

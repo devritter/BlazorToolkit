@@ -47,9 +47,16 @@ internal class BzDumpVm
             Tooltip += " Count=" + (CollectionCount?.ToString() ?? "?");
             ValueToString = TooltipToString;
         }
-        else if (Type.IsPrimitive)
+        else if (Type.IsPrimitive || Value is Guid)
         {
             IsPrimitive = true;
+        }
+        else if (Type.IsEnum)
+        {
+            IsPrimitive = true;
+            var numericValue = Convert.ToInt64(Value);
+            ValueToString = () => $"{Value} ({numericValue})";
+            Tooltip = $"{Type.Name}.{Value} = {numericValue}";
         }
 
         // else complex type

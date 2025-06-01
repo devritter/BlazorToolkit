@@ -10,7 +10,21 @@
                     else if (_vm.IsPrimitive)
                     {
                         <span class="bz-dump-value" title="@_vm.Tooltip">
-                            @_vm.ValueToString()
+                            @if (Value is bool booleanValue)
+                            {
+                                if (booleanValue)
+                                {
+                                    <span class="bz-dump-bool-true">@booleanValue</span>
+                                }
+                                else
+                                {
+                                    <span class="bz-dump-bool-false">@booleanValue</span>
+                                }
+                            }
+                            else
+                            {
+                                @_vm.ValueToString()
+                            }
                         </span>
                     }
                     else // complex or collection
@@ -82,8 +96,10 @@
             if (!sameValue)
             {
                 var isExpanded = _vm.IsExpanded;
-                _vm = new BzDumpVm(Value);
-                _vm.IsExpanded = isExpanded;
+                _vm = new BzDumpVm(Value)
+                {
+                    IsExpanded = isExpanded
+                };
             }
         }
 

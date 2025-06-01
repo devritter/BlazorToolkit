@@ -65,7 +65,12 @@
 <BzDump Value="typeof(MemoryStream)"/>
 <BzDump Value="new DirectoryInfo(Directory.GetCurrentDirectory())"/>
 <BzDump Value="new InvalidOperationException()"/>
+<BzDump Value="_task" />
+
+<br/>
+<br/>
+<button @onclick="StateHasChanged">Rerender</button>
 
 @code {
-
+    Task _task = Task.Delay(10_000);
 }

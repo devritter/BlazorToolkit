@@ -31,9 +31,13 @@
     border-width: 0;
 }
 
-.bz-dump-null-value, .bz-dump-header {
+.bz-dump-null-value, .bz-dump-header, .bz-dump-bool-false {
     color: silver;
     font-style: italic;
+}
+
+.bz-dump-bool-true {
+    font-weight: bold;
 }
 
 .bz-dump-inside {
