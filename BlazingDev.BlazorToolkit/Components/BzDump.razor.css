@@ -26,11 +26,57 @@
     border-top-left-radius: 0; /* this rule has to be at the end of this file */
 }
 
-.bz-dump-null-value, .bz-dump-type-name, .bz-dump-ienumerable-header {
+/* no border for nested BzDump instances */
+.bz-border-1 .bz-border-1, .bz-border-2 .bz-border-2, .bz-border-3 .bz-border-3 {
+    border-width: 0;
+}
+
+.bz-dump-null-value, .bz-dump-header {
     color: silver;
     font-style: italic;
 }
 
 .bz-dump-inside {
     min-width: 1em;
+}
+
+.expandable {
+    cursor: pointer;
+    display: inline-block;
+    min-width: 1em;
+}
+
+.expandable.collapsed:before {
+    content: '▶';
+}
+
+.expandable.expanded:before {
+    content: '▼'
+}
+
+.bz-dump-table {
+    border-collapse: collapse;
+    min-width: 100%;
+}
+
+.bz-dump-table th {
+    border: 1px solid #FFC000;
+    font-weight: inherit;
+    background-color: #FFFF00;
+    padding: 0 2px;
+}
+
+.bz-dump-table td {
+    border: 1px solid #FFC000;
+    padding: 0 2px;
+}
+
+/* add some spacing for nested BzDump instances */
+.bz-dump-table .bz-dump-table {
+    margin-bottom: 2px;
+}
+
+/* red text for dumped exceptions. Works because the type name is in the "title" attribute */
+.bz-dump-value[title$=Exception] {
+    color: #C00000;
 }

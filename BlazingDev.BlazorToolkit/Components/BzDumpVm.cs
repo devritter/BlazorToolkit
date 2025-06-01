@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Reflection;
 
 namespace BlazingDev.BlazorToolkit.Components;
 
@@ -9,6 +10,8 @@ internal class BzDumpVm
     public BzDumpVm(object? value)
     {
         Value = value;
+        ValueToString = DefaultToString;
+
         if (value == null)
         {
             Type = typeof(void);
@@ -18,8 +21,8 @@ internal class BzDumpVm
 
         Type = value.GetType();
         Tooltip = BzReflection.GetShortTypeName(Type);
-        
-        if (value is String aString)
+
+        if (value is string aString)
         {
             IsPrimitive = true;
             Tooltip += " Length=" + aString.Length;
@@ -40,21 +43,85 @@ internal class BzDumpVm
             {
                 CollectionCount = count;
             }
+
+            Tooltip += " Count=" + (CollectionCount?.ToString() ?? "?");
+            ValueToString = TooltipToString;
         }
         else if (Type.IsPrimitive)
         {
             IsPrimitive = true;
         }
-        else if (Value is DateTime dateTime)
+
+        // else complex type
+        Properties = Type.GetProperties();
+
+        if (Value is DateTime dateTime)
         {
             Tooltip += " Kind=" + dateTime.Kind;
+        }
+        else if (Value is Exception ex)
+        {
+            ValueToString = () => ex.Message;
         }
     }
 
     public object? Value { get; }
-    public Type Type { get; }
+    public Func<string?> ValueToString { get; }
+
     public string Tooltip { get; }
     public bool IsPrimitive { get; }
     public bool IsCollection { get; }
     public int? CollectionCount { get; }
+
+    private Type Type { get; }
+    public PropertyInfo[]? Properties { get; }
+
+    public bool IsExpanded { get; set; }
+
+    public object? GetPropertyValue(PropertyInfo property)
+    {
+        try
+        {
+            return property.GetValue(Value);
+        }
+        catch (TargetInvocationException targetEx)
+        {
+            return targetEx.InnerException;
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
+
+    private string? DefaultToString()
+    {
+        return Value?.ToString();
+    }
+
+    private string? TooltipToString()
+    {
+        return Tooltip;
+    }
+
+    public IEnumerable GetCollectionItems()
+    {
+        var list = new List<object>();
+        if (Value is IEnumerable enumerable)
+        {
+            try
+            {
+                foreach (var item in enumerable)
+                {
+                    list.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                list.Add(ex);
+            }
+        }
+
+        return list;
+    }
 }

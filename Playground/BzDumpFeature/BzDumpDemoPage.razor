@@ -29,11 +29,11 @@
 <BzDump Value="longString"/>
 
 <h3>DateTime and TimeSpan</h3>
-<BzDump Value="DateTime.Now" />
-<BzDump Value="DateTime.UtcNow" />
-<BzDump Value="DateTime.Now.TimeOfDay" />
-<BzDump Value="DateTimeOffset.Now" />
-<BzDump Value="DateTimeOffset.UtcNow" />
+<BzDump Value="DateTime.Now"/>
+<BzDump Value="DateTime.UtcNow"/>
+<BzDump Value="DateTime.Now.TimeOfDay"/>
+<BzDump Value="DateTimeOffset.Now"/>
+<BzDump Value="DateTimeOffset.UtcNow"/>
 
 <h3>Arrays and Lists</h3>
 @{
@@ -63,6 +63,8 @@
 <BzDump Value="@(BzComponentTool.GetMenuItem<BzDumpDemoPage>())"/>
 <BzDump Value="CultureInfo.CurrentCulture"/>
 <BzDump Value="typeof(MemoryStream)"/>
+<BzDump Value="new DirectoryInfo(Directory.GetCurrentDirectory())"/>
+<BzDump Value="new InvalidOperationException()"/>
 
 @code {
 

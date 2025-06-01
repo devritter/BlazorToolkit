@@ -7,23 +7,58 @@
                     {
                         <span class="bz-dump-null-value">null</span>
                     }
-                    else if (_vm.IsCollection)
-                    {
-                        <div class="bz-dump-ienumerable-header">
-                            @_vm.Tooltip Count=@(_vm.CollectionCount?.ToString() ?? "?")
-                        </div>
-                    }
                     else if (_vm.IsPrimitive)
                     {
                         <span class="bz-dump-value" title="@_vm.Tooltip">
-                            @Value
+                            @_vm.ValueToString()
                         </span>
                     }
-                    else
+                    else // complex or collection
                     {
-                        <span class="bz-dump-value" title="@_vm.Tooltip">
-                            @Value
-                        </span>
+                        <div>
+                            @if (_vm.IsExpanded)
+                            {
+                                <span class="expandable expanded" @onclick="ToggleExpanded"></span>
+                            }
+                            else
+                            {
+                                <span class="expandable collapsed" @onclick="ToggleExpanded"></span>
+                            }
+
+                            <span class="bz-dump-value" title="@_vm.Tooltip">
+                                @_vm.ValueToString()
+                            </span>
+                        </div>
+                        @if (_vm.IsExpanded)
+                        {
+                            @if (_vm.IsCollection && _vm.CollectionCount.GetValueOrDefault(1) > 0)
+                            {
+                                <table class="bz-dump-table">
+                                    @foreach (var item in _vm.GetCollectionItems())
+                                    {
+                                        <tr>
+                                            <td>
+                                                <BzDump Value="item"/>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else if (_vm.Properties != null)
+                            {
+                                <table class="bz-dump-table">
+                                    @foreach (var item in _vm.Properties)
+                                    {
+                                        <tr>
+                                            <th>@item.Name</th>
+                                            <td>
+                                                <BzDump Value="_vm.GetPropertyValue(item)"/>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                        }
                     }
                 </div>
             </div>
@@ -46,11 +81,18 @@
             var sameValue = ReferenceEquals(Value, _vm.Value);
             if (!sameValue)
             {
+                var isExpanded = _vm.IsExpanded;
                 _vm = new BzDumpVm(Value);
+                _vm.IsExpanded = isExpanded;
             }
         }
 
         base.OnParametersSet();
+    }
+
+    private void ToggleExpanded()
+    {
+        _vm.IsExpanded = !_vm.IsExpanded;
     }
 
 }

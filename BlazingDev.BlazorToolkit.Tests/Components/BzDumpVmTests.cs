@@ -13,7 +13,7 @@ public class BzDumpVmTests
         Test("h e l l o".Split(), true, 5);
         Test(Enumerable.Empty<int>(), true, null); // null count because it does not inherit ICollection
         Test(Enumerable.Repeat(false, 1000).ToList(), true, 1000);
-        
+
         // difficult to enumerate
         Test(Enumerable.Repeat("x", 1000).Where(x => true), true, null);
 
@@ -41,7 +41,7 @@ public class BzDumpVmTests
         new BzDumpVm(DateTime.UtcNow).Tooltip.Should().Be("DateTime Kind=Utc");
         var parsed = DateTime.Parse(DateTime.Now.ToString(CultureInfo.CurrentCulture));
         new BzDumpVm(parsed).Tooltip.Should().Be("DateTime Kind=Unspecified");
-        
+
         // keep DateTimes as "complex" types so they can be expanded
         new BzDumpVm(DateTime.Now).IsPrimitive.Should().BeFalse();
     }
@@ -51,7 +51,7 @@ public class BzDumpVmTests
     {
         new BzDumpVm(false).Tooltip.Should().Be("bool");
         new BzDumpVm(new MemoryStream()).Tooltip.Should().Be("MemoryStream");
-        new BzDumpVm(new List<string>()).Tooltip.Should().Be("List<string>");
+        new BzDumpVm(new Lazy<string>()).Tooltip.Should().Be("Lazy<string>");
     }
 
     [Theory]
@@ -64,5 +64,75 @@ public class BzDumpVmTests
     public void DetectsPrimitives(object input, bool isPrimitive)
     {
         new BzDumpVm(input).IsPrimitive.Should().Be(isPrimitive);
+    }
+
+    [Fact]
+    public void FillsProperties()
+    {
+        var vm = new BzDumpVm(new MemoryStream());
+        var properties = typeof(MemoryStream).GetProperties();
+        vm.Properties.Should().BeEquivalentTo(properties);
+    }
+
+    [Fact]
+    public void GetPropertyValue_CatchesExceptions()
+    {
+        var value = new MemoryStream();
+        var vm = new BzDumpVm(value);
+        var property = vm.Properties!.Single(x => x.Name == nameof(MemoryStream.ReadTimeout));
+        var propertyValue = vm.GetPropertyValue(property);
+        propertyValue.Should().BeOfType<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void ValueToString_DefaultsToDefaultToString()
+    {
+        new BzDumpVm(5).ValueToString().Should().Be("5");
+        new BzDumpVm(new CultureInfo("de-DE")).ValueToString().Should().Be("de-DE");
+    }
+
+    [Fact]
+    public void ValueToString_IsRedirected_ForCollections()
+    {
+        var list = new List<string>();
+        var vm = new BzDumpVm(list);
+        vm.ValueToString().Should().Be("List<string> Count=0");
+    }
+
+    [Fact]
+    public void ValueToString_IsRedirected_ForExceptions()
+    {
+        var ex = new InvalidOperationException("see inner exception", new NotImplementedException());
+        var vm = new BzDumpVm(ex);
+        vm.ValueToString().Should().Be(ex.Message);
+        vm.ValueToString().Should().NotBe(ex.ToString());
+    }
+
+    [Fact]
+    public void GetCollectionItems_ForArrays()
+    {
+        var value = new[] { 1, 2, 3 };
+        var vm = new BzDumpVm(value);
+        vm.GetCollectionItems().Should().BeEquivalentTo(value);
+    }
+
+    [Fact]
+    public void GetCollectionItems_ForLists()
+    {
+        var value = new List<string> { "a", "b", "c" };
+        var vm = new BzDumpVm(value);
+        vm.GetCollectionItems().Should().BeEquivalentTo(value);
+    }
+
+    [Fact]
+    public void GetCollectionItems_CatchesExceptions()
+    {
+        var ints = new List<int> { 1 };
+        var memoryStreams = new List<MemoryStream>() { new() };
+        var dangerousList = ints.Concat(memoryStreams.Select(x => x.WriteTimeout));
+        var vm = new BzDumpVm(dangerousList);
+        var values = vm.GetCollectionItems().OfType<object>().ToList();
+        values[0].Should().Be(1);
+        values[1].Should().BeOfType<InvalidOperationException>();
     }
 }
