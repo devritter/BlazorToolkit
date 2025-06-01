@@ -17,7 +17,7 @@ public class BzDumpVmTests
         // difficult to enumerate
         Test(Enumerable.Repeat("x", 1000).Where(x => true), true, null);
 
-        void Test(object input, bool isCollection, int? collectionCount)
+        void Test(object? input, bool isCollection, int? collectionCount)
         {
             var vm = new BzDumpVm(input);
             vm.IsCollection.Should().Be(isCollection);
