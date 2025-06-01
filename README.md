@@ -2,6 +2,19 @@
 
 Useful components and utilities for Blazor developers
 
+## BzDump
+
+BzDump is a powerful UI component that displays all properties of a given object using reflection — 
+similar to what you see in a debugger's inspect variable view in Visual Studio. \
+It provides a structured and readable view of an object's state at runtime, making it an invaluable tool for diagnostics and troubleshooting. \
+By enabling object inspection without requiring an attached debugger, you can boost your productivity and get deeper insight into application behavior during live execution or in production-like environments.
+
+```xml
+<BzDump Value="yourStateVariable" />
+<BzDump Value="CultureInfo.CurrentCulture" />
+<BzDump Value="resultFromRestApiCall" />
+```
+
 ## BzComponentBase
 
 Your new component base class with:
